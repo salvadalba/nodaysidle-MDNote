@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+    /* Glass effects */
+    --color-glass-bg: rgba(255, 255, 255, 0.03);
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+    --color-glass-dark-bg: rgba(0, 0, 0, 0.25);
+    --color-glass-dark-border: rgba(255, 255, 255, 0.05);
+    --shadow-glass-dark: 0 0 50px -12px rgba(0, 0, 0, 0.5);
+
+    /* Default theme colors (dark mode as default for @theme) */
+    --color-background: hsl(0 0% 12%);
+    --color-foreground: hsl(0 0% 90%);
+    --color-card: hsl(0 0% 18%);
+    --color-card-foreground: hsl(0 0% 90%);
+    --color-popover: hsl(0 0% 18%);
+    --color-popover-foreground: hsl(0 0% 90%);
+    --color-primary: hsl(210 100% 50%);
+    --color-primary-foreground: hsl(0 0% 100%);
+    --color-secondary: hsl(0 0% 25%);
+    --color-secondary-foreground: hsl(0 0% 90%);
+    --color-muted: hsl(0 0% 25%);
+    --color-muted-foreground: hsl(0 0% 60%);
+    --color-accent: hsl(210 15% 25%);
+    --color-accent-foreground: hsl(0 0% 90%);
+    --color-destructive: hsl(0 62% 30%);
+    --color-destructive-foreground: hsl(0 0% 90%);
+    --color-border: hsl(0 0% 30%);
+    --color-input: hsl(0 0% 30%);
+    --color-ring: hsl(210 100% 50%);
+
+    --radius: 0.5rem;
+    --animate-shimmer: shimmer 2s infinite linear;
+
+    @keyframes shimmer {
+        0% {
+            background-position: -1000px 0;
+        }
+        100% {
+            background-position: 1000px 0;
+        }
+    }
+}
+
+@layer base {
+    :root {
+        /* macOS Chalk / Light Mode Palette */
+        --color-background: hsl(0 0% 97%);
+        --color-foreground: hsl(0 0% 12%);
+        --color-card: hsl(0 0% 100%);
+        --color-card-foreground: hsl(0 0% 12%);
+        --color-popover: hsl(0 0% 100%);
+        --color-popover-foreground: hsl(0 0% 12%);
+        --color-primary: hsl(210 100% 50%);
+        --color-primary-foreground: hsl(0 0% 100%);
+        --color-secondary: hsl(0 0% 90%);
+        --color-secondary-foreground: hsl(0 0% 12%);
+        --color-muted: hsl(0 0% 90%);
+        --color-muted-foreground: hsl(0 0% 40%);
+        --color-accent: hsl(210 10% 94%);
+        --color-accent-foreground: hsl(0 0% 12%);
+        --color-destructive: hsl(0 84% 60%);
+        --color-destructive-foreground: hsl(0 0% 100%);
+        --color-border: hsl(0 0% 88%);
+        --color-input: hsl(0 0% 88%);
+        --color-ring: hsl(210 100% 50%);
+    }
+
+    .dark {
+        /* macOS Chalk / Dark Mode Palette */
+        --color-background: hsl(0 0% 12%);
+        --color-foreground: hsl(0 0% 90%);
+        --color-card: hsl(0 0% 18%);
+        --color-card-foreground: hsl(0 0% 90%);
+        --color-popover: hsl(0 0% 18%);
+        --color-popover-foreground: hsl(0 0% 90%);
+        --color-primary: hsl(210 100% 50%);
+        --color-primary-foreground: hsl(0 0% 100%);
+        --color-secondary: hsl(0 0% 25%);
+        --color-secondary-foreground: hsl(0 0% 90%);
+        --color-muted: hsl(0 0% 25%);
+        --color-muted-foreground: hsl(0 0% 60%);
+        --color-accent: hsl(210 15% 25%);
+        --color-accent-foreground: hsl(0 0% 90%);
+        --color-destructive: hsl(0 62% 30%);
+        --color-destructive-foreground: hsl(0 0% 90%);
+        --color-border: hsl(0 0% 30%);
+        --color-input: hsl(0 0% 30%);
+        --color-ring: hsl(210 100% 50%);
+    }
+
+    * {
+        @apply transition-colors duration-200;
+    }
+}
+
+@layer utilities {
+    .glass {
+        @apply backdrop-blur-xl bg-glass-bg border border-glass-border shadow-2xl;
+    }
+
+    .dark .glass {
+        @apply bg-glass-dark-bg border-glass-dark-border shadow-glass-dark;
+    }
+
+    .shimmer {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0) 100%);
+        background-size: 1000px 100%;
+        @apply animate-shimmer;
+    }
+}
+
+html, body {
+    background: transparent !important;
+}
+
+body {
+    @apply text-foreground min-h-screen overflow-hidden antialiased;
+}
+
+/* Tauri specific styles */
+:root {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}

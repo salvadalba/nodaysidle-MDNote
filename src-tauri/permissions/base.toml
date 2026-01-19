@@ -1,0 +1,140 @@
+# Base permissions for MDNote application commands
+
+[[permission]]
+identifier = "allow-create-note"
+description = "Allows creating new notes"
+commands.allow = ["create_note"]
+
+[[permission]]
+identifier = "allow-get-note"
+description = "Allows reading note content"
+commands.allow = ["get_note"]
+
+[[permission]]
+identifier = "allow-update-note"
+description = "Allows updating note content"
+commands.allow = ["update_note"]
+
+[[permission]]
+identifier = "allow-delete-note"
+description = "Allows deleting notes"
+commands.allow = ["delete_note"]
+
+[[permission]]
+identifier = "allow-list-notes"
+description = "Allows listing notes"
+commands.allow = ["list_notes"]
+
+[[permission]]
+identifier = "allow-search-notes"
+description = "Allows searching notes"
+commands.allow = ["search_notes"]
+
+[[permission]]
+identifier = "allow-create-folder"
+description = "Allows creating folders"
+commands.allow = ["create_folder"]
+
+[[permission]]
+identifier = "allow-list-folders"
+description = "Allows listing folders"
+commands.allow = ["list_folders"]
+
+[[permission]]
+identifier = "allow-update-folder"
+description = "Allows updating folders"
+commands.allow = ["update_folder"]
+
+[[permission]]
+identifier = "allow-delete-folder"
+description = "Allows deleting folders"
+commands.allow = ["delete_folder"]
+
+[[permission]]
+identifier = "allow-create-tag"
+description = "Allows creating tags"
+commands.allow = ["create_tag"]
+
+[[permission]]
+identifier = "allow-list-tags"
+description = "Allows listing tags"
+commands.allow = ["list_tags"]
+
+[[permission]]
+identifier = "allow-add-tag-to-note"
+description = "Allows adding tags to notes"
+commands.allow = ["add_tag_to_note"]
+
+[[permission]]
+identifier = "allow-remove-tag-from-note"
+description = "Allows removing tags from notes"
+commands.allow = ["remove_tag_from_note"]
+
+[[permission]]
+identifier = "allow-get-note-tags"
+description = "Allows getting tags for a note"
+commands.allow = ["get_note_tags"]
+
+[[permission]]
+identifier = "allow-get-settings"
+description = "Allows reading application settings"
+commands.allow = ["get_settings"]
+
+[[permission]]
+identifier = "allow-update-settings"
+description = "Allows updating application settings"
+commands.allow = ["update_settings"]
+
+[[permission]]
+identifier = "allow-add-backlink"
+description = "Allows adding backlinks"
+commands.allow = ["add_backlink"]
+
+[[permission]]
+identifier = "allow-remove-backlink"
+description = "Allows removing backlinks"
+commands.allow = ["remove_backlink"]
+
+[[permission]]
+identifier = "allow-get-backlinks"
+description = "Allows getting backlinks for a note"
+commands.allow = ["get_backlinks"]
+
+[[permission]]
+identifier = "allow-get-outgoing-links"
+description = "Allows getting outgoing links from a note"
+commands.allow = ["get_outgoing_links"]
+
+[[permission]]
+identifier = "allow-sync-backlinks"
+description = "Allows syncing backlinks"
+commands.allow = ["sync_backlinks"]
+
+# Permission set bundling all permissions
+[[set]]
+identifier = "base"
+description = "Full access to all MDNote commands"
+permissions = [
+    "allow-create-note",
+    "allow-get-note",
+    "allow-update-note",
+    "allow-delete-note",
+    "allow-list-notes",
+    "allow-search-notes",
+    "allow-create-folder",
+    "allow-list-folders",
+    "allow-update-folder",
+    "allow-delete-folder",
+    "allow-create-tag",
+    "allow-list-tags",
+    "allow-add-tag-to-note",
+    "allow-remove-tag-from-note",
+    "allow-get-note-tags",
+    "allow-get-settings",
+    "allow-update-settings",
+    "allow-add-backlink",
+    "allow-remove-backlink",
+    "allow-get-backlinks",
+    "allow-get-outgoing-links",
+    "allow-sync-backlinks"
+]
