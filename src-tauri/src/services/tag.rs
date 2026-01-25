@@ -80,9 +80,9 @@ impl<'a> TagService<'a> {
     pub fn get_note_tags(&self, note_id: String) -> Result<Vec<Tag>> {
         let conn = self.db.connection();
         let mut stmt = conn.prepare(
-            "SELECT t.id, t.name, t.color 
-             FROM tags t 
-             JOIN note_tags nt ON t.id = nt.tag_id 
+            "SELECT t.id, t.name, t.color
+             FROM tags t
+             JOIN note_tags nt ON t.id = nt.tag_id
              WHERE nt.note_id = ?"
         )?;
 
@@ -100,5 +100,20 @@ impl<'a> TagService<'a> {
         }
 
         Ok(tags)
+    }
+
+    pub fn delete_tag(&self, tag_id: String) -> Result<()> {
+        let conn = self.db.connection();
+        // First remove all note-tag associations
+        conn.execute(
+            "DELETE FROM note_tags WHERE tag_id = ?",
+            params![tag_id],
+        )?;
+        // Then delete the tag itself
+        conn.execute(
+            "DELETE FROM tags WHERE id = ?",
+            params![tag_id],
+        )?;
+        Ok(())
     }
 }

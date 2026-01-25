@@ -12,7 +12,7 @@ import SettingsModal from './components/SettingsModal';
 const App: React.FC = () => {
   const { listNotes, getNote, createNote, updateNote } = useNotes();
   const { listFolders, createFolder, updateFolder, deleteFolder } = useFolders();
-  const { listTags, createTag } = useTags();
+  const { listTags, createTag, deleteTag } = useTags();
   const { settings, updateSettings } = useSettings();
 
   const [notes, setNotes] = useState<NoteSummary[]>([]);
@@ -131,6 +131,17 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteTag = async (id: string) => {
+    try {
+      await deleteTag(id);
+      if (selectedTagId === id) setSelectedTagId(null);
+      fetchTags();
+      fetchNotes(selectedFolderId, selectedTagId === id ? null : selectedTagId);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleUpdateFolder = async (id: string, name: string) => {
     try {
       await updateFolder(id, { name });
@@ -186,6 +197,7 @@ const App: React.FC = () => {
         onCreateNote={handleCreateNote}
         onCreateFolder={handleCreateFolder}
         onCreateTag={handleCreateTag}
+        onDeleteTag={handleDeleteTag}
         onRenameFolder={handleUpdateFolder}
         onDeleteFolder={handleDeleteFolder}
         onMoveNote={handleMoveNote}
@@ -196,7 +208,7 @@ const App: React.FC = () => {
       <main className="flex-1 overflow-hidden relative border-l border-border/10">
         <div className="absolute inset-0 bg-background/30 backdrop-blur-sm">
           {selectedNote ? (
-            <Editor note={selectedNote} onSave={handleSaveNote} onSelectNote={handleSelectNote} loading={isLoadingNote} />
+            <Editor note={selectedNote} onSave={handleSaveNote} onSelectNote={handleSelectNote} onTagsChanged={fetchTags} loading={isLoadingNote} />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground gap-6 flex-col animate-in fade-in zoom-in duration-500">
               <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/5">

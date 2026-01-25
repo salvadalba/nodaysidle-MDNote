@@ -12,6 +12,7 @@ interface SidebarProps {
     onCreateNote: () => void;
     onCreateFolder: (name: string) => void;
     onCreateTag: (name: string) => void;
+    onDeleteTag: (id: string) => void;
     onDeleteFolder: (id: string) => void;
     onRenameFolder: (id: string, newName: string) => void;
     onMoveNote: (noteId: string, targetFolderId: string | null) => void;
@@ -32,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     onCreateNote,
     onCreateFolder,
     onCreateTag,
+    onDeleteTag,
     onDeleteFolder,
     onRenameFolder,
     onMoveNote,
@@ -46,6 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [isCreatingTag, setIsCreatingTag] = useState(false);
     const [newTagName, setNewTagName] = useState('');
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, folderId: string } | null>(null);
+    const [tagContextMenu, setTagContextMenu] = useState<{ x: number, y: number, tagId: string, tagName: string } | null>(null);
     const [isRenaming, setIsRenaming] = useState<string | null>(null);
     const [renameValue, setRenameValue] = useState('');
 
@@ -69,7 +72,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     const handleContextMenu = (e: React.MouseEvent, folderId: string) => {
         e.preventDefault();
+        setTagContextMenu(null);
         setContextMenu({ x: e.clientX, y: e.clientY, folderId });
+    };
+
+    const handleTagContextMenu = (e: React.MouseEvent, tagId: string, tagName: string) => {
+        e.preventDefault();
+        setContextMenu(null);
+        setTagContextMenu({ x: e.clientX, y: e.clientY, tagId, tagName });
     };
 
     const handleRenameSubmit = (e: React.FormEvent) => {
@@ -101,7 +111,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     useEffect(() => {
-        const handleClick = () => setContextMenu(null);
+        const handleClick = () => {
+            setContextMenu(null);
+            setTagContextMenu(null);
+        };
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
     }, []);
@@ -247,6 +260,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 <li key={tag.id}>
                                     <button
                                         onClick={() => { onSelectTag(tag.id); onSelectFolder(null); }}
+                                        onContextMenu={(e) => handleTagContextMenu(e, tag.id, tag.name)}
                                         className={`px-2 py-0.5 rounded-full text-[11px] font-medium transition-all flex items-center gap-1.5 ${selectedTagId === tag.id
                                             ? 'ring-1 ring-white/20 text-white'
                                             : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground'
@@ -314,7 +328,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </button>
             </div>
 
-            {/* Context Menu */}
+            {/* Folder Context Menu */}
             {contextMenu && (
                 <div
                     className="fixed bg-popover/90 glass border border-border rounded-xl shadow-2xl py-1 z-50 w-32 animate-in fade-in zoom-in-95 duration-200"
@@ -341,6 +355,33 @@ const Sidebar: React.FC<SidebarProps> = ({
                         onClick={() => {
                             if (confirm('Are you sure you want to delete this folder? Notes will be moved to the root.')) {
                                 onDeleteFolder(contextMenu.folderId);
+                            }
+                        }}
+                    >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                        Delete
+                    </button>
+                </div>
+            )}
+
+            {/* Tag Context Menu */}
+            {tagContextMenu && (
+                <div
+                    className="fixed bg-popover/90 glass border border-border rounded-xl shadow-2xl py-1 z-50 w-32 animate-in fade-in zoom-in-95 duration-200"
+                    style={{
+                        top: Math.min(tagContextMenu.y, window.innerHeight - 60),
+                        left: Math.min(tagContextMenu.x, window.innerWidth - 150)
+                    }}
+                >
+                    <button
+                        className="w-full text-left px-3 py-2 text-xs text-red-400 font-medium hover:bg-red-500/20 hover:text-red-300 transition-colors flex items-center gap-2"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const tagId = tagContextMenu.tagId;
+                            const tagName = tagContextMenu.tagName;
+                            setTagContextMenu(null);
+                            if (confirm(`Are you sure you want to delete the tag "${tagName}"? It will be removed from all notes.`)) {
+                                onDeleteTag(tagId);
                             }
                         }}
                     >

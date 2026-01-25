@@ -2,7 +2,7 @@ use tauri::State;
 use crate::models::note::{Note, NoteSummary};
 use crate::services::database::DbState;
 use crate::services::note::NoteService;
-use crate::errors::Result;
+use crate::errors::{Result, AppError};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -18,7 +18,7 @@ pub async fn create_note(
     title: String,
     content: String,
 ) -> Result<Note> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = NoteService::new(&db);
     service.create_note(folder_id, title, content)
 }
@@ -28,7 +28,7 @@ pub async fn get_note(
     state: State<'_, DbState>,
     id: String,
 ) -> Result<Note> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = NoteService::new(&db);
     service.get_note(id)
 }
@@ -41,7 +41,7 @@ pub async fn update_note(
     content: Option<String>,
     folder_id: Option<Option<String>>,
 ) -> Result<Note> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = NoteService::new(&db);
     service.update_note(id, title, content, folder_id)
 }
@@ -51,7 +51,7 @@ pub async fn delete_note(
     state: State<'_, DbState>,
     id: String,
 ) -> Result<bool> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = NoteService::new(&db);
     service.delete_note(id)?;
     Ok(true)
@@ -65,7 +65,7 @@ pub async fn list_notes(
     limit: Option<i32>,
     offset: Option<i32>,
 ) -> Result<ListNotesResponse> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = NoteService::new(&db);
     let (notes, total) = service.list_notes(folder_id, tag_id, limit.unwrap_or(50), offset.unwrap_or(0))?;
     Ok(ListNotesResponse { notes, total })

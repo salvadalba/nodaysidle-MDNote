@@ -2,7 +2,7 @@ use tauri::State;
 use crate::models::note::NoteSummary;
 use crate::services::database::DbState;
 use crate::services::backlink::{BacklinkService, Backlink};
-use crate::errors::Result;
+use crate::errors::{Result, AppError};
 
 #[tauri::command]
 pub async fn add_backlink(
@@ -11,7 +11,7 @@ pub async fn add_backlink(
     target_id: String,
     context: Option<String>,
 ) -> Result<()> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = BacklinkService::new(&db);
     service.add_link(source_id, target_id, context)
 }
@@ -22,7 +22,7 @@ pub async fn remove_backlink(
     source_id: String,
     target_id: String,
 ) -> Result<()> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = BacklinkService::new(&db);
     service.remove_link(source_id, target_id)
 }
@@ -32,7 +32,7 @@ pub async fn get_backlinks(
     state: State<'_, DbState>,
     target_id: String,
 ) -> Result<Vec<Backlink>> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = BacklinkService::new(&db);
     service.get_backlinks(target_id)
 }
@@ -42,7 +42,7 @@ pub async fn get_outgoing_links(
     state: State<'_, DbState>,
     source_id: String,
 ) -> Result<Vec<NoteSummary>> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = BacklinkService::new(&db);
     service.get_outgoing_links(source_id)
 }
@@ -53,7 +53,7 @@ pub async fn sync_backlinks(
     source_id: String,
     content: String,
 ) -> Result<()> {
-    let db = state.0.lock().unwrap();
+    let db = state.0.lock().map_err(|e| AppError::LockError(e.to_string()))?;
     let service = BacklinkService::new(&db);
     
     // Simple regex-based discovery for now: [[note-id]] or #tag-like-links

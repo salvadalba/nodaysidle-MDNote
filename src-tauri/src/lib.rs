@@ -10,7 +10,7 @@ use tauri::Manager;
 use commands::note::{create_note, get_note, update_note, delete_note, list_notes};
 use commands::search::{search_notes};
 use commands::folder::{create_folder, list_folders, update_folder, delete_folder};
-use commands::tag::{create_tag, list_tags, add_tag_to_note, remove_tag_from_note, get_note_tags};
+use commands::tag::{create_tag, list_tags, add_tag_to_note, remove_tag_from_note, get_note_tags, delete_tag};
 use commands::settings::{get_settings, update_settings};
 use commands::backlink::{add_backlink, remove_backlink, get_backlinks, get_outgoing_links, sync_backlinks};
 
@@ -32,9 +32,11 @@ pub fn run() {
             // Apply macOS vibrancy effect
             #[cfg(target_os = "macos")]
             {
-                let window = app.get_webview_window("main").unwrap();
-                apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
-                    .expect("Failed to apply vibrancy");
+                if let Some(window) = app.get_webview_window("main") {
+                    if let Err(e) = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None) {
+                        tracing::warn!("Failed to apply vibrancy: {:?}", e);
+                    }
+                }
             }
 
             Ok(())
@@ -55,6 +57,7 @@ pub fn run() {
             add_tag_to_note,
             remove_tag_from_note,
             get_note_tags,
+            delete_tag,
             get_settings,
             update_settings,
             add_backlink,

@@ -7,6 +7,7 @@ pub enum AppError {
     NotFound(String),
     SqliteError(String),
     IoError(String),
+    LockError(String),
 }
 
 impl fmt::Display for AppError {
@@ -15,6 +16,7 @@ impl fmt::Display for AppError {
             AppError::NotFound(msg) => write!(f, "Not Found: {}", msg),
             AppError::SqliteError(msg) => write!(f, "Database Error: {}", msg),
             AppError::IoError(msg) => write!(f, "IO Error: {}", msg),
+            AppError::LockError(msg) => write!(f, "Lock Error: {}", msg),
         }
     }
 }

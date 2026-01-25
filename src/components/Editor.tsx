@@ -9,10 +9,11 @@ interface EditorProps {
     note: Note;
     onSave: (content: string, title?: string) => void;
     onSelectNote: (id: string) => void;
+    onTagsChanged?: () => void;
     loading?: boolean;
 }
 
-const Editor: React.FC<EditorProps> = ({ note, onSave, onSelectNote, loading = false }) => {
+const Editor: React.FC<EditorProps> = ({ note, onSave, onSelectNote, onTagsChanged, loading = false }) => {
     const [title, setTitle] = useState(note.title);
     const [content, setContent] = useState(note.content);
     const [isDirty, setIsDirty] = useState(false);
@@ -90,6 +91,8 @@ const Editor: React.FC<EditorProps> = ({ note, onSave, onSelectNote, loading = f
             setTags(updatedTags);
             setNewTagName('');
             setIsAddingTag(false);
+            // Notify parent to refresh sidebar tags
+            onTagsChanged?.();
         } catch (e) {
             console.error(e);
         }
@@ -99,6 +102,8 @@ const Editor: React.FC<EditorProps> = ({ note, onSave, onSelectNote, loading = f
         try {
             await removeTagFromNote(note.id, tagId);
             setTags(tags.filter(t => t.id !== tagId));
+            // Notify parent to refresh sidebar tags (count changed)
+            onTagsChanged?.();
         } catch (e) {
             console.error(e);
         }

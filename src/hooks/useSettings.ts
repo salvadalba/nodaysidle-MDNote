@@ -7,12 +7,28 @@ export const useSettings = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const applyTheme = useCallback((theme: string) => {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (theme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            // System preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.classList.toggle('dark', prefersDark);
+        }
+    }, []);
+
     const fetchSettings = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const res = await invoke<Settings>('get_settings');
             setSettings(res);
+            // Apply theme on initial load
+            if (res.theme) {
+                applyTheme(res.theme);
+            }
             return res;
         } catch (e: any) {
             setError(e.message || 'Failed to fetch settings');
@@ -20,7 +36,7 @@ export const useSettings = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [applyTheme]);
 
     const updateSettings = useCallback(async (newSettings: Settings) => {
         setLoading(true);
@@ -28,18 +44,10 @@ export const useSettings = () => {
         try {
             const res = await invoke<Settings>('update_settings', { settings: newSettings });
             setSettings(res);
-
-            // Apply theme
-            if (res.theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else if (res.theme === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
-                // System
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', prefersDark);
+            // Apply theme on update
+            if (res.theme) {
+                applyTheme(res.theme);
             }
-
             return res;
         } catch (e: any) {
             setError(e.message || 'Failed to update settings');
@@ -47,7 +55,7 @@ export const useSettings = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [applyTheme]);
 
     useEffect(() => {
         fetchSettings();

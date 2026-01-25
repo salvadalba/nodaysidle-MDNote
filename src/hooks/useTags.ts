@@ -74,6 +74,19 @@ export const useTags = () => {
         }
     }, []);
 
+    const deleteTag = useCallback(async (tagId: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            await invoke<void>('delete_tag', { tagId });
+        } catch (e: any) {
+            setError(e.message || 'Failed to delete tag');
+            throw e;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     return {
         loading,
         error,
@@ -82,5 +95,6 @@ export const useTags = () => {
         addTagToNote,
         removeTagFromNote,
         getNoteTags,
+        deleteTag,
     };
 };

@@ -67,8 +67,16 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ onSelect, onClose }) =>
         return () => clearTimeout(timer);
     }, [query, searchNotes]);
 
+    const escapeHtml = (text: string) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+
     const highlightText = (text: string) => {
-        return text.replace(/==([^=]+)==/g, '<span class="text-blue-400 font-bold bg-blue-500/10 px-0.5 rounded">$1</span>');
+        // Escape HTML first to prevent XSS, then apply highlighting
+        const escaped = escapeHtml(text);
+        return escaped.replace(/==([^=]+)==/g, '<span class="text-blue-400 font-bold bg-blue-500/10 px-0.5 rounded">$1</span>');
     };
 
     return (
